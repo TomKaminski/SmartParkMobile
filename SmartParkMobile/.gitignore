@@ -1,0 +1,26 @@
+﻿# .gitignore
+[Pp]lugins/android.json
+[Pp]lugins/windows.json
+[Pp]lugins/wp8.json
+[Pp]lugins/remote_ios.json
+[Pp]latforms/
+!web/js
+!web/images
+.buildpath
+.project
+.idea
+.settings*
+.DS_Store
+nbproject
+node_modules
+npm-debug.log
+.tmp
+.sass-cache
+.tern-project
+src/vendors
+web/css
+web/scripts/*
+/cordova
+web/index.html
+rev-manifest.json
+*.swp
