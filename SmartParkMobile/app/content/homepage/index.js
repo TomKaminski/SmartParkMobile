@@ -1,4 +1,4 @@
-var homepage = angular.module('content-homepage', ['appTemplates']);
+var homepage = angular.module('content-homepage', ['appTemplates', 'ionic']);
 
 homepage.stateConfig = {
     templateProvider: [

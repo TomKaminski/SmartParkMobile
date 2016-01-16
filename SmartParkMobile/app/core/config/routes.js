@@ -1,7 +1,7 @@
 angular.module('app-routes', [
     'ui.router',
 
-    'content-not-found',
+    'content-layout',
     'content-homepage'
 ]);
 
@@ -14,35 +14,27 @@ angular.module('app-routes').config([
         $locationProvider,
         $urlRouterProvider
     ) {
-        $urlRouterProvider.otherwise('/404');
-
-        //$locationProvider.html5Mode(!$window.cordova);
         $locationProvider.html5Mode(false);
 
         $stateProvider.state('app', {
             abstract: true,
+            url: "/app",
             views: {
-            },
-            resolve: {
-            }
-        });
-
-        $stateProvider.state('app.notfound', {
-            url: '/404',
-            views: {
-                'content@': angular.module('content-not-found').stateConfig
+                'layout': angular.module('content-layout').stateConfig
             }
         });
 
         $stateProvider.state('app.homepage', {
-            url: '',
+            url: '/home',
             views: {
-                'content@': angular.module('content-homepage').stateConfig
+                'content': angular.module('content-homepage').stateConfig
             }
         });
         $stateProvider.state('app.homepage.alias', {
             url: '/'
         });
+
+        $urlRouterProvider.otherwise("/app/home");
 
     }
 ]);
