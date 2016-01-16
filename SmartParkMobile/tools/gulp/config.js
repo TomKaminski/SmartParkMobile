@@ -43,19 +43,15 @@ var paths = {
 };
 
 paths.scripts.vendors.list = [
-    paths.scripts.vendors.src + 'jquery/dist/jquery.min.js',
-    paths.scripts.vendors.src + 'angular/angular.js',
-    paths.scripts.vendors.src + 'angular-ui-router/release/angular-ui-router.min.js',
-    paths.scripts.vendors.src + 'angular-messages/angular-messages.min.js'
+    paths.scripts.vendors.src + 'ionic/release/js/ionic.bundle.js'
 ];
 paths.styles.vendors.list = [
-    paths.styles.vendors.src + 'bootstrap/dist/css/bootstrap.css'
+    paths.styles.vendors.src + 'ionic/release/css/ionic.css'
 ];
 paths.spec.list = [
     paths.scripts.dest + 'vendors.js',
     paths.scripts.dest + 'templates.js',
     paths.scripts.dest + 'app.js',
-    paths.scripts.vendors.src + 'angular-mocks/angular-mocks.js',
     paths.spec.src
 ];
 

@@ -14,6 +14,11 @@ module.exports = function(gulp, plugins, config) {
         });
     });
 
+    gulp.task('build-only', ['clean-rev', 'scripts', 'styles'], function () {
+        return gulp.src(config.paths.build.templates.index)
+            .pipe(gulp.dest(config.paths.build.dest));
+    });
+
     gulp.task('build-cordova', ['clean-rev', 'scripts', 'styles'], function () {
         return gulp.src(config.paths.build.templates.cordova)
             .pipe(plugins.rename(function(path) {
