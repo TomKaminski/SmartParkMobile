@@ -4,7 +4,7 @@ catch(err) { module = angular.module("appTemplates", []); }
 module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/content/homepage/templates/index.html",
-    "<ion-view title=\"TEST\"><ion-content padding=\"true\">homepage<br>{{ homepageCtrl.model.message }}<br>{{ homepageCtrl.zmienna }}</ion-content></ion-view>");
+    "<ion-view title=\"SmartPark - Home\"><ion-content padding=\"true\" has-bouncing=\"true\"><div class=\"col-80 col-offset-10 margin-top-20\"><img src=\"../img/logo.png\"></div><div class=\"col-80 col-offset-10 margin-top-20\"><button ng-click=\"homepageCtrl.GetStudentDataWithHeader('tkaminski93@gmail.com')\">GetStudentDataWithHeader</button><br><button ng-click=\"homepageCtrl.GetStudentDataWithoutHeader('tkaminski93@gmail.com')\">GetStudentDataWithoutHeader</button><br><button ng-click=\"homepageCtrl.CheckUserHeader('tkaminski93@gmail.com')\">CheckUserHeader</button></div></ion-content></ion-view>");
 }]);
 })();
 

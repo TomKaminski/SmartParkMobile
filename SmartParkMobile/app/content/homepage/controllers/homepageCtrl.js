@@ -1,23 +1,45 @@
-﻿angular.module('content-homepage').controller('homepageCtrl', [
-    '$window',
-    function (
-        $window
-    ) {
+﻿(function () {
+    'use strict';
+
+    function homepageController(accountService, apiFactory) {
 
         var self = this;
 
-        self.model = {
-            message: "wiadomość"
+        self.GetStudentDataWithHeader = function(userName) {
+            apiFactory.post(apiFactory.apiEnum.GetStudentDataWithHeader, { userName: userName }).then(function (data) {
+                console.log(data);
+                debugger;
+                if (data.Result.PasswordHash != null && data.Result.PasswordHash.length !== 0) {
+                    accountService.login(data.PasswordHash, userName, data.Result.Charges);
+                }
+            }, function (err) {
+                console.log(err);
+            });
         };
 
-        self.show = show;
+        self.GetStudentDataWithoutHeader = function (userName) {
+            apiFactory.post(apiFactory.apiEnum.GetStudentDataWithoutHeader, { userName: userName }).then(function (data) {
+                console.log(data);
+                debugger;
+                if (data.Result.PasswordHash != null && data.Result.PasswordHash.length !== 0) {
+                    accountService.login(data.Result.PasswordHash, userName, data.Result.Charges);
+                }
+            }, function (err) {
+                console.log(err);
+            });
+        };
 
-        function show() {
-
-        }
-
-        if (!!$window.cordova) {
-            console.log(navigator.camera);
-        }
+        self.CheckUserHeader = function (userName) {
+            apiFactory.post(apiFactory.apiEnum.CheckUserHeader, { userName: userName }).then(function (data) {
+                debugger;
+                console.log(data);
+            }, function (err) {
+                console.log(err);
+            });
+        };
     }
-]);
+
+    angular.module('content-homepage').controller('homepageCtrl', homepageController);
+})();
+
+

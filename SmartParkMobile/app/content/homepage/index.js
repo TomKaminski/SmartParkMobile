@@ -1,12 +1,21 @@
-var homepage = angular.module('content-homepage', ['appTemplates', 'ionic']);
+(function() {
+    'use strict';
 
-homepage.stateConfig = {
-    templateProvider: [
-        '$templateCache',
-        function ($templateCache) {
-            return $templateCache.get('app/content/homepage/templates/index.html');
-        }
-    ],
-    controller: 'homepageCtrl',
-    controllerAs: 'homepageCtrl'
-};
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/homepage/templates/index.html');
+                }
+            ],
+            controller: 'homepageCtrl',
+            controllerAs: 'homepageCtrl'
+        };
+    }
+
+    angular.module('content-homepage', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+
