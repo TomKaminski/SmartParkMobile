@@ -21,17 +21,20 @@
                 url: "/app",
                 views: {
                     'layout': angular.module('content-layout').stateConfig
-                }
+                },
+                cache: false
             });
 
             $stateProvider.state('app.homepage', {
                 url: '/home',
                 views: {
                     'content': angular.module('content-homepage').stateConfig
-                }
+                },
+                cache: false
             });
             $stateProvider.state('app.homepage.alias', {
-                url: '/'
+                url: '/',
+                cache: false
             });
 
             $urlRouterProvider.otherwise("/app/home");

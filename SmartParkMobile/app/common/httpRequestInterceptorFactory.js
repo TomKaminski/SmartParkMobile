@@ -1,13 +1,13 @@
 ﻿(function () {
     'use strict';
 
-    function httpRequestInterceptorFactory(localStorageFactory) {
+    function httpRequestInterceptorFactory(localStorageFactory, CONFIG) {
         return {
             request: function (config) {
-                config.headers['HashHeader'] = localStorageFactory.get('hash') || "";
+                config.headers[CONFIG.hashHeaderName] = localStorageFactory.get(CONFIG.localStorageEnum.hash) || "";
                 return config;
             }
         };
     }
-    angular.module('app').factory('httpRequestInterceptorFactory', httpRequestInterceptorFactory);
+    angular.module('app').factory('httpRequestInterceptorFactory', ['localStorageFactory', 'CONFIG', httpRequestInterceptorFactory]);
 })();

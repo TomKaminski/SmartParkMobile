@@ -1,9 +1,7 @@
 ﻿(function () {
     'use strict';
 
-    function apiFactory($http, $q) {
-
-        var globalPath = "http://localhost:9873/Api";
+    function apiFactory($http, $q, CONFIG) {
 
         var apiEnum = {
             login: "/Account/Login",
@@ -15,7 +13,7 @@
 
         function get(apiUrl, options) {
             var defered = $q.defer();
-            $http.get(globalPath + apiUrl, { params: options })
+            $http.get(CONFIG.apiGlobalUrl + apiUrl, { params: options })
                 .success(function (data) {
                     defered.resolve(data);
                 }).error(function () {
@@ -26,7 +24,7 @@
 
         function post(apiUrl, options) {
             var defered = $q.defer();
-            $http.post(globalPath + apiUrl, options)
+            $http.post(CONFIG.apiGlobalUrl + apiUrl, options)
                 .success(function (data) {
                     defered.resolve(data);
                 }).error(function (err) {
@@ -42,5 +40,5 @@
         };
     }
 
-    angular.module('app').factory('apiFactory', apiFactory);
+    angular.module('app').factory('apiFactory', ['$http', '$q', 'CONFIG', apiFactory]);
 })();

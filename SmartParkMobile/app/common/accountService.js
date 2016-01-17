@@ -1,59 +1,58 @@
 ﻿(function () {
     'use strict';
 
-    function accountService(localStorageFactory) {
+    function accountService(localStorageFactory, CONFIG) {
 
-        var loggedIn;
-        var userCharges;
-        var userEmail;
-        var memoryHash;
+        var userData = {
+            loggedIn : false,
+            charges : null,
+            userEmail: null,
+            memoryHash: null
+        }
 
-        this.updateCharges = function() {
-            userCharges = localStorageFactory.get('charges');
+        this.updateCharges = function () {
+            userData.charges = localStorageFactory.get(CONFIG.localStorageEnum.charges);
         };
 
-        this.login = function(hash, email, charges) {
-            localStorageFactory.set('email', email);
-            localStorageFactory.set('hash', hash);
-            localStorageFactory.set('charges', charges);
-            loggedIn = true;
-            userCharges = charges;
-            userEmail = email;
-            memoryHash = hash;
+        this.login = function (hash, email, charges) {
+            localStorageFactory.set(CONFIG.localStorageEnum.email, email);
+            localStorageFactory.set(CONFIG.localStorageEnum.hash, hash);
+            localStorageFactory.set(CONFIG.localStorageEnum.charges, charges);
+            userData.loggedIn = true;
+            userData.charges = charges;
+            userData.userEmail = email;
+            userData.memoryHash = hash;
         };
 
-        this.getAccountData = function() {
-            return {
-                loggedIn,
-                userCharges,
-                userEmail,
-                memoryHash
-            };
+        this.getAccountData = function () {
+            return userData;
         };
 
-        this.checkIfLogged = function() {
-            memoryHash = localStorageFactory.get('hash');
-            if (memoryHash === null) {
-                return false;
-            } else {
-                userEmail = localStorageFactory.get('email');
-                userCharges = localStorageFactory.get('charges');
-                loggedIn = true;
-                return true;
+        this.initUserContext = function () {
+            if (userData.loggedIn === true && userData.memoryHash !== null) {
+                return userData;
             }
+
+            userData.memoryHash = localStorageFactory.get(CONFIG.localStorageEnum.hash);
+            if (userData.memoryHash === null) {
+                userData.loggedIn = false;
+                userData.charges = null;
+                userData.userEmail = null;
+            } else {
+                userData.userEmail = localStorageFactory.get(CONFIG.localStorageEnum.email);
+                userData.charges = localStorageFactory.get(CONFIG.localStorageEnum.charges);
+                userData.loggedIn = true;
+            }
+            return userData;
         };
 
-        this.fastCheckIfLogged = function() {
-            return loggedIn;
-        };
-
-        this.logout = function() {
-            loggedIn = false;
-            userCharges = null;
-            userEmail = null;
-            memoryHash = null;
+        this.logout = function () {
+            userData.loggedIn = false;
+            userData.charges = null;
+            userData.userEmail = null;
+            userData.memoryHash = null;
             localStorageFactory.clear();
         };
     }
-    angular.module('app').service('accountService', accountService);
+    angular.module('app').service('accountService', ['localStorageFactory', 'CONFIG', accountService]);
 })();
