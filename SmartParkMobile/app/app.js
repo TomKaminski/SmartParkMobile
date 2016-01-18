@@ -15,6 +15,11 @@
             "email": "email",
             "hash": "hash",
             "name":"name"
+        },
+        ConnectivityProblemMessage: "Wyst¹pi³ b³¹d po³¹czenia, sprawdŸ ³¹cznoœæ z internetem.",
+        notificationEnum: {
+            "error": "error",
+            "success": "success"
         }
     });
 })();

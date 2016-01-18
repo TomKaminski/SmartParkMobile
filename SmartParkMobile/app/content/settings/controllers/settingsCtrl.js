@@ -1,51 +1,53 @@
 ﻿(function () {
     'use strict';
 
-    function settingsController(accountService, apiFactory) {
+    function settingsController(accountService, apiFactory, $controller, $scope, CONFIG) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
+
         var self = this;
 
         self.changePassword = function (code, newCode) {
-            self.processing = true;
-            self.error = "";
+            self.clearNotifications();
+            self.globalLoadingOn();
+            self.refreshUserContext();
 
-            var accData = accountService.getAccountData();
-            apiFactory.post(apiFactory.apiUrlEnum.changeCode, { Email: accData.userEmail, Code: code, NewCode: newCode }).then(function (data) {
-                self.processing = false;
-                if (data.Result.Changed === true) {
-                    self.error = "Hasło zostało zmienione, zaloguj się do aplikacji używając nowego hasła.";
+            apiFactory.post(apiFactory.apiEnum.ChangePassword, { Email: self.user.userEmail, Code: code, NewCode: newCode }).then(function (data) {
+                self.globalLoadingOff();
+                if (data.IsValid) {
+                    self.pushToNotifications({ value: "Hasło zostało zmienione, zaloguj się do aplikacji używając nowego hasła.", type: CONFIG.notificationEnum.success });
                     accountService.logout();
-                } else if (data.Changed === false) {
-                    self.error = data.Message === undefined ? "Wystąpił błąd, podane obecne hasło jest niepoprawne." : data.Message;
                 } else {
-                    accountService.logout();
-                    self.loginError = "Takie konto nie istnieje.";
+                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
                 }
-            }, function () {
-                self.error = "Wystąpił błąd połączenia.";
-                self.processing = false;
+              }, function () {
+                self.globalLoadingOff();
+                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
             });
         };
 
         self.changeEmail = function (newEmail, pass) {
-            self.processingEmail = true;
-            self.errorEmail = "";
+            self.clearNotifications();
+            self.globalLoadingOn();
+            self.refreshUserContext();
 
-            var accData = accountService.getAccountData();
-            apiFactory.post(apiFactory.apiUrlEnum.changeEmail, { NewEmail: newEmail, Password: pass, Email: accData.userEmail }).then(function (data) {
-                self.processingEmail = false;
+            apiFactory.post(apiFactory.apiEnum.ChangeEmail, { NewEmail: newEmail, Password: pass, Email: self.user.userEmail }).then(function (data) {
+                self.globalLoadingOff();
                 self.errorEmail = data.Message;
-                if (data.Changed === true) {
+                if (data.IsValid === true) {
+                    self.pushToNotifications({ value: "Email został zmieniony, zaloguj się do aplikacji używając nowego emaila.", type: CONFIG.notificationEnum.success });
                     accountService.logout();
+                } else {
+                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
                 }
             }, function () {
-                self.error = "Wystąpił błąd połączenia.";
-                self.processingEmail = false;
+                self.globalLoadingOff();
+                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
             });
         };
 
     }
 
-    angular.module('content-settings').controller('settingsCtrl', ['accountService', 'apiFactory', '$timeout', settingsController]);
+    angular.module('content-settings').controller('settingsCtrl', ['accountService', 'apiFactory', '$timeout', '$controller','$scope','CONFIG', settingsController]);
 })();
 
 

@@ -1,37 +1,33 @@
 ﻿(function () {
     'use strict';
 
-    function homepageController(accountService, apiFactory, $timeout) {
+    function homepageController(accountService, apiFactory, $timeout, $controller, $scope, CONFIG) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
 
         var self = this;
-        refreshUserContext();
-        self.countText = "Otwórz bramę!";
+        self.refreshUserContext();
+        self.gateBtnText = "Otwórz bramę!";
 
         self.login = function (email, password) {
-            self.processing = true;
-            self.loginError = "";
-
-            apiFactory.post(apiFactory.apiEnum.login, { UserName: email, Password: password }).then(function (data) {
-                self.processing = false;
+            self.globalLoadingOn();
+            self.clearNotifications();
+            apiFactory.post(apiFactory.apiEnum.Login, { UserName: email, Password: password }).then(function (data) {
+                self.globalLoadingOff();
                 if (data.IsValid === true) {
                     accountService.login(data.Result.PasswordHash, email, data.Result.Charges, data.Result.Name);
-                    refreshUserContext();
+                    self.refreshUserContext();
                 } else {
-                    self.loginError = data.ValidationErrors[0];
+                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
                 }
             }, function () {
-                self.loginError = "Wystąpił błąd logowania.";
-                self.processing = false;
+                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                self.globalLoadingOff();
             });
         }
 
-        self.logout = function () { 
+        self.logout = function () {
             accountService.logout();
-            refreshUserContext();
-        }
-
-        function refreshUserContext() {
-            self.user = accountService.initUserContext();
+            self.refreshUserContext();
         }
 
         var i = 5;
@@ -39,70 +35,73 @@
             if (i !== 0) {
                 $timeout(function () {
                     i--;
-                    self.countText = i + "...";
+                    self.gateBtnText = i + "...";
                     removeDisabled();
                 }, 1000);
             }
             if (i === 0) {
-                self.turnOff = false;
-                self.countText = "Otwórz bramę!";
+                self.isGateBtnActive = true;
+                self.gateBtnText = "Otwórz bramę!";
                 i = 5;
             }
         }
-        
-        self.openGates = function () {
-            refreshUserContext();
-            var accData = accountService.getAccountData();
-            if (accData.loggedIn === true) {
-                self.turnOff = true;
-                self.processing = true;
-                self.gateError = "";
 
-                apiFactory.post(apiFactory.apiEnum.openGate, { Email: accData.userEmail }).then(function (data) {
-                    self.processing = false;
-                    if (data !== null) {
+        self.openGates = function () {
+            self.clearNotifications();
+            self.refreshUserContext();
+            if (self.user.loggedIn === true) {
+                self.isGateBtnActive = true;
+                self.globalLoadingOn();
+                apiFactory.post(apiFactory.apiEnum.OpenGate, { Email: self.user.userEmail }).then(function (data) {
+                    self.globalLoadingOff();
+                    if (data.IsValid === true) {
                         accountService.updateCharges(data.Result);
-                        refreshUserContext();
-                        if (data !== 0) {
-                            self.countText = 5 + "...";
+                        self.refreshUserContext();
+                        if (data.Result !== 0) {
+                            self.gateBtnText = 5 + "...";
                             removeDisabled();
                         } else {
-                            self.gateError = "Brak wyjazdów.";
-                            self.turnOff = false;
+                            self.pushToNotifications({ value: "Brak wyjazdów.", type: CONFIG.notificationEnum.error });
+                            self.isGateBtnActive = true;
                         }
                     } else {
-                        self.turnOff = false;
+                        self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                        self.isGateBtnActive = true;
                         window.localStorage.clear();
-                        refreshUserContext();
+                        self.refreshUserContext();
                     }
                 }, function () {
-                    self.turnOff = false;
-                    self.processing = false;
-                    self.gateError = "Wystąpił błąd połączenia.";
+                    self.isGateBtnActive = true;
+                    self.globalLoadingOff();
+                    self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
                 });
             }
         }
 
         self.refresh = function () {
-            refreshUserContext();
+            self.clearNotifications();
+            self.refreshUserContext();
             if (self.user.loggedIn === true) {
-                self.processingRefresh = true;
-                self.refreshError = "";
-
-                apiFactory.post(apiFactory.apiEnum.refreshCharges, { Email: self.user.userEmail }).then(function (data) {
-                    self.processingRefresh = false;
-                    accountService.updateCharges(data.Result);
-                    refreshUserContext();
+                self.globalLoadingOn();
+                self.clearNotifications();
+                apiFactory.post(apiFactory.apiEnum.RefreshCharges, { Email: self.user.userEmail }).then(function (data) {
+                    self.globalLoadingOff();
+                    if (data.IsValid === true) {
+                        accountService.updateCharges(data.Result);
+                        self.refreshUserContext();
+                    } else {
+                        self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                    }
                 }, function () {
-                    self.refreshError = "Wystąpił błąd połączenia.";
-                    self.processingRefresh = false;
+                    self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                    self.globalLoadingOff();
                 });
             }
         };
 
     }
 
-    angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout', homepageController]);
+    angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout' , '$controller', '$scope', 'CONFIG', homepageController]);
 })();
 
 

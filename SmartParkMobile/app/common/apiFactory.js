@@ -4,14 +4,15 @@
     function apiFactory($http, $q, CONFIG) {
 
         var apiEnum = {
-            login: "/Account/Login",
-            changePassword: "/Manage/ChangePassword",
-            forgotPassword: "/Account/ForgotPassword",
-            openGate: "/Parking/OpenGate",
-            refreshCharges: "/Parking/RefreshCharges",
+            Login: "/Account/Login",
+            ChangePassword: "/Manage/ChangePassword",
+            ForgotPassword: "/Account/ForgotPassword",
+            OpenGate: "/Parking/OpenGate",
+            RefreshCharges: "/Parking/RefreshCharges",
             GetStudentDataWithHeader: "/Test/GetStudentDataWithHeader",
             GetStudentDataWithoutHeader: "/Test/GetStudentDataWithoutHeader",
-            CheckUserHeader: "/Test/CheckUserHeader"
+            CheckUserHeader: "/Test/CheckUserHeader",
+            ChangeEmail: "/Manage/ChangeEmail"
         }
 
         function get(apiUrl, options) {

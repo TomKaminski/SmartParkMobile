@@ -1,27 +1,29 @@
 ﻿(function () {
     'use strict';
 
-    function forgotController(accountService, apiFactory) {
+    function forgotController(accountService, apiFactory, $controller, $scope, CONFIG) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
+
         var self = this;
 
         self.forgotPassword = function (email) {
-            self.processing = true;
-            self.error = "";
-            apiFactory.post(apiFactory.apiEnum.forgotPassword, { Email: email }).then(function (data) {
-                self.processing = false;
-                if (data === true) {
-                    self.error = "Email został wysłany.";
+            self.clearNotifications();
+            self.globalLoadingOn();
+            apiFactory.post(apiFactory.apiEnum.ForgotPassword, { Email: email }).then(function (data) {
+                self.globalLoadingOff();
+                if (data.IsValid === true) {
+                    self.pushToNotifications({ value: "Email został wysłany.", type: CONFIG.notificationEnum.success });
                 } else {
-                    self.error = "Wystąpił błąd.";
+                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
                 }
             }, function () {
-                self.error = "Wystąpił błąd połączenia.";
-                self.processing = false;
+                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                self.globalLoadingOff();
             });
         }
     }
 
-    angular.module('content-forgot').controller('forgotCtrl', ['accountService', 'apiFactory', '$timeout', forgotController]);
+    angular.module('content-forgot').controller('forgotCtrl', ['accountService', 'apiFactory', '$controller', '$scope', 'CONFIG', forgotController]);
 })();
 
 
