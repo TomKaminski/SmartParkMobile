@@ -6,6 +6,9 @@
         var apiEnum = {
             login: "/Account/Login",
             changePassword: "/Manage/ChangePassword",
+            forgotPassword: "/Account/ForgotPassword",
+            openGate: "/Parking/OpenGate",
+            refreshCharges: "/Parking/RefreshCharges",
             GetStudentDataWithHeader: "/Test/GetStudentDataWithHeader",
             GetStudentDataWithoutHeader: "/Test/GetStudentDataWithoutHeader",
             CheckUserHeader: "/Test/CheckUserHeader"

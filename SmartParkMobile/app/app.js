@@ -13,7 +13,8 @@
         localStorageEnum: {
             "charges": "charges",
             "email": "email",
-            "hash": "hash"
+            "hash": "hash",
+            "name":"name"
         }
     });
 })();

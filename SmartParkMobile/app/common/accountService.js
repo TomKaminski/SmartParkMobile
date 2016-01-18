@@ -7,21 +7,26 @@
             loggedIn : false,
             charges : null,
             userEmail: null,
-            memoryHash: null
+            memoryHash: null,
+            userName: null
         }
 
-        this.updateCharges = function () {
+        this.updateCharges = function (charges) {
+            localStorageFactory.set(CONFIG.localStorageEnum.charges, charges);
             userData.charges = localStorageFactory.get(CONFIG.localStorageEnum.charges);
         };
 
-        this.login = function (hash, email, charges) {
+        this.login = function (hash, email, charges, name) {
             localStorageFactory.set(CONFIG.localStorageEnum.email, email);
             localStorageFactory.set(CONFIG.localStorageEnum.hash, hash);
             localStorageFactory.set(CONFIG.localStorageEnum.charges, charges);
+            localStorageFactory.set(CONFIG.localStorageEnum.name, name);
+
             userData.loggedIn = true;
             userData.charges = charges;
             userData.userEmail = email;
             userData.memoryHash = hash;
+            userData.userName = name;
         };
 
         this.getAccountData = function () {
@@ -38,9 +43,11 @@
                 userData.loggedIn = false;
                 userData.charges = null;
                 userData.userEmail = null;
+                userData.userName = null;
             } else {
                 userData.userEmail = localStorageFactory.get(CONFIG.localStorageEnum.email);
                 userData.charges = localStorageFactory.get(CONFIG.localStorageEnum.charges);
+                userData.userName = localStorageFactory.get(CONFIG.localStorageEnum.name);
                 userData.loggedIn = true;
             }
             return userData;
@@ -50,6 +57,7 @@
             userData.loggedIn = false;
             userData.charges = null;
             userData.userEmail = null;
+            userData.userName = null;
             userData.memoryHash = null;
             localStorageFactory.clear();
         };

@@ -21,13 +21,6 @@
                     <span ng-if="!homepageCtrl.processing">{{homepageCtrl.countText}}</span>
                 </button>
                 <p class="form-error text-center" ng-show="homepageCtrl.gateError!=''">{{homepageCtrl.gateError}}</p>
-
-                <button class="button button-full button-energized icon ion-gear-a no-padding" ui-sref="app.settings">
-                    Ustawienia
-                </button>
-                <button class="button button-full button-assertive" ng-click="homepageCtrl.logout()">
-                    Wyloguj z aplikacji
-                </button>
             </div>
 
             <div ng-if="homepageCtrl.user.loggedIn === false">
@@ -55,10 +48,6 @@
                     <span class="icon center" ng-class="{'zalogujContent':!homepageCtrl.processing}"></span>
                     <ion-spinner icon="android" class="spinner-light" ng-if="homepageCtrl.processing"></ion-spinner>
                 </button>
-
-                <a class="button button-full button-assertive center" ui-sref="app.recovery">
-                    Zapomniane hasło
-                </a>
             </div>
         </div>
     </ion-content>

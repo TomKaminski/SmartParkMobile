@@ -1,0 +1,31 @@
+﻿<ion-view title="SmartPark - Forgot Password">
+    <ion-content has-bouncing="true" overflow-scroll="false">
+        <div class="col-80 col-offset-10 margin-top-20">
+            <img src="../img/logo.png" />
+        </div>
+        <div class="margin-top-20">
+            <div class="padding">
+                <p>
+                    Jeżeli zapomniałeś hasła do swojego konta lub z jakiegoś powodu je straciłeś, to jest to odpowiednie miejsce.
+                </p>
+                <p>Aby zmienić hasło wpisz poniżej adres email, który podawałeś przy rejestracji w systemie Parking ATH.</p>
+                <p>Na podany adres email zostanie wysłana wiadomość z dalszymi instrukcjami.</p>
+            </div>
+            <div class="list" ng-form name="form">
+                <label class="item item-input item-floating-label" ng-class="{'has-error':form.email.$invalid && form.email.$touched}">
+                    <span class="input-label">Adres email</span>
+                    <input type="email" placeholder="Email" ng-model="email" required name="email"
+                           id="email">
+                    <span class="form-error" ng-show="form.email.$error.required && form.email.$touched">Podaj adres email!</span>
+                    <span class="form-error"
+                          ng-show="form.email.$error.email && form.email.$touched">To nie jest prawidłowy adres email!</span>
+                </label>
+            </div>
+            <p class="text-center form-error" ng-show="forgotCtrl.error!=''">{{forgotCtrl.error}}</p>
+            <button class="button button-full button-positive" ng-click="forgotCtrl.forgotPassword(email)" ng-class="{'disabled':form.$invalid || forgotCtrl.processing==true}">
+                <span class="icon" ng-class="{'changeCodeContent':!forgotCtrl.processing}"></span>
+                <ion-spinner icon="spiral" class="spinner-light" ng-if="forgotCtrl.processing"></ion-spinner>
+            </button>
+        </div>
+    </ion-content>
+</ion-view>

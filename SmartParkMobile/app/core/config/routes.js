@@ -4,7 +4,10 @@
     angular.module('app-routes', [
         'ui.router',
         'content-layout',
-        'content-homepage'
+        'content-homepage',
+        'content-about',
+        'content-settings',
+        'content-forgot'
     ]).config([
         '$stateProvider',
         '$locationProvider',
@@ -32,8 +35,33 @@
                 },
                 cache: false
             });
+
             $stateProvider.state('app.homepage.alias', {
                 url: '/',
+                cache: false
+            });
+
+            $stateProvider.state('app.about', {
+                url: '/about',
+                views: {
+                    'content': angular.module('content-about').stateConfig
+                },
+                cache: false
+            });
+
+            $stateProvider.state('app.settings', {
+                url: '/settings',
+                views: {
+                    'content': angular.module('content-settings').stateConfig
+                },
+                cache: false
+            });
+
+            $stateProvider.state('app.forgot', {
+                url: '/forgot',
+                views: {
+                    'content': angular.module('content-forgot').stateConfig
+                },
                 cache: false
             });
 

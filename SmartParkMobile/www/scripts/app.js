@@ -13,7 +13,8 @@
         localStorageEnum: {
             "charges": "charges",
             "email": "email",
-            "hash": "hash"
+            "hash": "hash",
+            "name":"name"
         }
     });
 })();
@@ -28,21 +29,26 @@
             loggedIn : false,
             charges : null,
             userEmail: null,
-            memoryHash: null
+            memoryHash: null,
+            userName: null
         }
 
-        this.updateCharges = function () {
+        this.updateCharges = function (charges) {
+            localStorageFactory.set(CONFIG.localStorageEnum.charges, charges);
             userData.charges = localStorageFactory.get(CONFIG.localStorageEnum.charges);
         };
 
-        this.login = function (hash, email, charges) {
+        this.login = function (hash, email, charges, name) {
             localStorageFactory.set(CONFIG.localStorageEnum.email, email);
             localStorageFactory.set(CONFIG.localStorageEnum.hash, hash);
             localStorageFactory.set(CONFIG.localStorageEnum.charges, charges);
+            localStorageFactory.set(CONFIG.localStorageEnum.name, name);
+
             userData.loggedIn = true;
             userData.charges = charges;
             userData.userEmail = email;
             userData.memoryHash = hash;
+            userData.userName = name;
         };
 
         this.getAccountData = function () {
@@ -59,9 +65,11 @@
                 userData.loggedIn = false;
                 userData.charges = null;
                 userData.userEmail = null;
+                userData.userName = null;
             } else {
                 userData.userEmail = localStorageFactory.get(CONFIG.localStorageEnum.email);
                 userData.charges = localStorageFactory.get(CONFIG.localStorageEnum.charges);
+                userData.userName = localStorageFactory.get(CONFIG.localStorageEnum.name);
                 userData.loggedIn = true;
             }
             return userData;
@@ -71,6 +79,7 @@
             userData.loggedIn = false;
             userData.charges = null;
             userData.userEmail = null;
+            userData.userName = null;
             userData.memoryHash = null;
             localStorageFactory.clear();
         };
@@ -85,6 +94,9 @@
         var apiEnum = {
             login: "/Account/Login",
             changePassword: "/Manage/ChangePassword",
+            forgotPassword: "/Account/ForgotPassword",
+            openGate: "/Parking/OpenGate",
+            refreshCharges: "/Parking/RefreshCharges",
             GetStudentDataWithHeader: "/Test/GetStudentDataWithHeader",
             GetStudentDataWithoutHeader: "/Test/GetStudentDataWithoutHeader",
             CheckUserHeader: "/Test/CheckUserHeader"
@@ -162,6 +174,147 @@
 (function() {
     'use strict';
 
+    angular.module('app-routes', [
+        'ui.router',
+        'content-layout',
+        'content-homepage',
+        'content-about',
+        'content-settings',
+        'content-forgot'
+    ]).config([
+        '$stateProvider',
+        '$locationProvider',
+        '$urlRouterProvider',
+        function (
+            $stateProvider,
+            $locationProvider,
+            $urlRouterProvider
+        ) {
+            $locationProvider.html5Mode(false);
+
+            $stateProvider.state('app', {
+                abstract: true,
+                url: "/app",
+                views: {
+                    'layout': angular.module('content-layout').stateConfig
+                },
+                cache: false
+            });
+
+            $stateProvider.state('app.homepage', {
+                url: '/home',
+                views: {
+                    'content': angular.module('content-homepage').stateConfig
+                },
+                cache: false
+            });
+
+            $stateProvider.state('app.homepage.alias', {
+                url: '/',
+                cache: false
+            });
+
+            $stateProvider.state('app.about', {
+                url: '/about',
+                views: {
+                    'content': angular.module('content-about').stateConfig
+                },
+                cache: false
+            });
+
+            $stateProvider.state('app.settings', {
+                url: '/settings',
+                views: {
+                    'content': angular.module('content-settings').stateConfig
+                },
+                cache: false
+            });
+
+            $stateProvider.state('app.forgot', {
+                url: '/forgot',
+                views: {
+                    'content': angular.module('content-forgot').stateConfig
+                },
+                cache: false
+            });
+
+            $urlRouterProvider.otherwise("/app/home");
+
+        }
+    ]);
+})();
+
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/forgot/templates/forgot.html');
+                }
+            ],
+            controller: 'forgotCtrl',
+            controllerAs: 'forgotCtrl'
+        };
+    }
+
+    angular.module('content-forgot', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/about/templates/index.html');
+                }
+            ],
+            controller: 'aboutCtrl',
+            controllerAs: 'aboutCtrl'
+        };
+    }
+
+    angular.module('content-about', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/settings/templates/settings.html');
+                }
+            ],
+            controller: 'settingsCtrl',
+            controllerAs: 'settingsCtrl'
+        };
+    }
+
+    angular.module('content-settings', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+
+
+(function() {
+    'use strict';
+
     function stateConfig() {
         return {
             templateProvider: [
@@ -201,49 +354,94 @@
 })();
 
 
-(function() {
+(function () {
     'use strict';
 
-    angular.module('app-routes', [
-        'ui.router',
-        'content-layout',
-        'content-homepage'
-    ]).config([
-        '$stateProvider',
-        '$locationProvider',
-        '$urlRouterProvider',
-        function (
-            $stateProvider,
-            $locationProvider,
-            $urlRouterProvider
-        ) {
-            $locationProvider.html5Mode(false);
+    function forgotController(accountService, apiFactory) {
+        var self = this;
 
-            $stateProvider.state('app', {
-                abstract: true,
-                url: "/app",
-                views: {
-                    'layout': angular.module('content-layout').stateConfig
-                },
-                cache: false
+        self.forgotPassword = function (email) {
+            self.processing = true;
+            self.error = "";
+            apiFactory.post(apiFactory.apiEnum.forgotPassword, { Email: email }).then(function (data) {
+                self.processing = false;
+                if (data === true) {
+                    self.error = "Email został wysłany.";
+                } else {
+                    self.error = "Wystąpił błąd.";
+                }
+            }, function () {
+                self.error = "Wystąpił błąd połączenia.";
+                self.processing = false;
             });
-
-            $stateProvider.state('app.homepage', {
-                url: '/home',
-                views: {
-                    'content': angular.module('content-homepage').stateConfig
-                },
-                cache: false
-            });
-            $stateProvider.state('app.homepage.alias', {
-                url: '/',
-                cache: false
-            });
-
-            $urlRouterProvider.otherwise("/app/home");
-
         }
-    ]);
+    }
+
+    angular.module('content-forgot').controller('forgotCtrl', ['accountService', 'apiFactory', '$timeout', forgotController]);
+})();
+
+
+
+(function () {
+    'use strict';
+
+    function aboutCtrl() {
+        var self = this;
+    }
+
+    angular.module('content-about').controller('aboutCtrl', aboutCtrl);
+})();
+
+
+
+(function () {
+    'use strict';
+
+    function settingsController(accountService, apiFactory) {
+        var self = this;
+
+        self.changePassword = function (code, newCode) {
+            self.processing = true;
+            self.error = "";
+
+            var accData = accountService.getAccountData();
+            apiFactory.post(apiFactory.apiUrlEnum.changeCode, { Email: accData.userEmail, Code: code, NewCode: newCode }).then(function (data) {
+                self.processing = false;
+                if (data.Result.Changed === true) {
+                    self.error = "Hasło zostało zmienione, zaloguj się do aplikacji używając nowego hasła.";
+                    accountService.logout();
+                } else if (data.Changed === false) {
+                    self.error = data.Message === undefined ? "Wystąpił błąd, podane obecne hasło jest niepoprawne." : data.Message;
+                } else {
+                    accountService.logout();
+                    self.loginError = "Takie konto nie istnieje.";
+                }
+            }, function () {
+                self.error = "Wystąpił błąd połączenia.";
+                self.processing = false;
+            });
+        };
+
+        self.changeEmail = function (newEmail, pass) {
+            self.processingEmail = true;
+            self.errorEmail = "";
+
+            var accData = accountService.getAccountData();
+            apiFactory.post(apiFactory.apiUrlEnum.changeEmail, { NewEmail: newEmail, Password: pass, Email: accData.userEmail }).then(function (data) {
+                self.processingEmail = false;
+                self.errorEmail = data.Message;
+                if (data.Changed === true) {
+                    accountService.logout();
+                }
+            }, function () {
+                self.error = "Wystąpił błąd połączenia.";
+                self.processingEmail = false;
+            });
+        };
+
+    }
+
+    angular.module('content-settings').controller('settingsCtrl', ['accountService', 'apiFactory', '$timeout', settingsController]);
 })();
 
 
@@ -257,11 +455,6 @@
         refreshUserContext();
         self.countText = "Otwórz bramę!";
 
-        //self.init = function () {
-        //    debugger;
-        //    refreshUserContext();
-        //}
-
         self.login = function (email, password) {
             self.processing = true;
             self.loginError = "";
@@ -269,7 +462,7 @@
             apiFactory.post(apiFactory.apiEnum.login, { UserName: email, Password: password }).then(function (data) {
                 self.processing = false;
                 if (data.IsValid === true) {
-                    accountService.login(data.Result.PasswordHash, email, data.Result.Charges);
+                    accountService.login(data.Result.PasswordHash, email, data.Result.Charges, data.Result.Name);
                     refreshUserContext();
                 } else {
                     self.loginError = data.ValidationErrors[0];
@@ -280,7 +473,7 @@
             });
         }
 
-        self.logout = function () {
+        self.logout = function () { 
             accountService.logout();
             refreshUserContext();
         }
@@ -289,51 +482,72 @@
             self.user = accountService.initUserContext();
         }
 
-        //var i = 5;
-        //function removeDisabled() {
-        //    if (i !== 0) {
-        //        $timeout(function () {
-        //            i--;
-        //            self.countText = i + "...";
-        //            removeDisabled();
-        //        }, 1000);
-        //    }
-        //    if (i === 0) {
-        //        self.turnOff = false;
-        //        self.countText = "Otwórz bramę!";
-        //        i = 5;
-        //    }
-        //}
+        var i = 5;
+        function removeDisabled() {
+            if (i !== 0) {
+                $timeout(function () {
+                    i--;
+                    self.countText = i + "...";
+                    removeDisabled();
+                }, 1000);
+            }
+            if (i === 0) {
+                self.turnOff = false;
+                self.countText = "Otwórz bramę!";
+                i = 5;
+            }
+        }
+        
+        self.openGates = function () {
+            refreshUserContext();
+            var accData = accountService.getAccountData();
+            if (accData.loggedIn === true) {
+                self.turnOff = true;
+                self.processing = true;
+                self.gateError = "";
 
-        //self.GetStudentDataWithHeader = function(userName) {
-        //    apiFactory.post(apiFactory.apiEnum.GetStudentDataWithHeader, { userName: userName }).then(function (data) {
-        //        console.log(data);
-        //        if (data.Result.PasswordHash != null && data.Result.PasswordHash.length !== 0) {
-        //            accountService.login(data.PasswordHash, userName, data.Result.Charges);
-        //        }
-        //    }, function (err) {
-        //        console.log(err);
-        //    });
-        //};
+                apiFactory.post(apiFactory.apiEnum.openGate, { Email: accData.userEmail }).then(function (data) {
+                    self.processing = false;
+                    if (data !== null) {
+                        accountService.updateCharges(data.Result);
+                        refreshUserContext();
+                        if (data !== 0) {
+                            self.countText = 5 + "...";
+                            removeDisabled();
+                        } else {
+                            self.gateError = "Brak wyjazdów.";
+                            self.turnOff = false;
+                        }
+                    } else {
+                        self.turnOff = false;
+                        window.localStorage.clear();
+                        refreshUserContext();
+                    }
+                }, function () {
+                    self.turnOff = false;
+                    self.processing = false;
+                    self.gateError = "Wystąpił błąd połączenia.";
+                });
+            }
+        }
 
-        //self.GetStudentDataWithoutHeader = function (userName) {
-        //    apiFactory.post(apiFactory.apiEnum.GetStudentDataWithoutHeader, { userName: userName }).then(function (data) {
-        //        console.log(data);
-        //        if (data.Result.PasswordHash != null && data.Result.PasswordHash.length !== 0) {
-        //            accountService.login(data.Result.PasswordHash, userName, data.Result.Charges);
-        //        }
-        //    }, function (err) {
-        //        console.log(err);
-        //    });
-        //};
+        self.refresh = function () {
+            refreshUserContext();
+            if (self.user.loggedIn === true) {
+                self.processingRefresh = true;
+                self.refreshError = "";
 
-        //self.CheckUserHeader = function (userName) {
-        //    apiFactory.post(apiFactory.apiEnum.CheckUserHeader, { userName: userName }).then(function (data) {
-        //        console.log(data);
-        //    }, function (err) {
-        //        console.log(err);
-        //    });
-        //};
+                apiFactory.post(apiFactory.apiEnum.refreshCharges, { Email: self.user.userEmail }).then(function (data) {
+                    self.processingRefresh = false;
+                    accountService.updateCharges(data.Result);
+                    refreshUserContext();
+                }, function () {
+                    self.refreshError = "Wystąpił błąd połączenia.";
+                    self.processingRefresh = false;
+                });
+            }
+        };
+
     }
 
     angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout', homepageController]);
@@ -344,13 +558,28 @@
 (function () {
     'use strict';
 
-    function layoutController($ionicSideMenuDelegate) {
+    function layoutController($ionicSideMenuDelegate, accountService, $state) {
         var self = this;
+
+        self.getUserContext = function() {
+            return accountService.initUserContext();
+        }
 
         self.toggleLeft = function () {
             $ionicSideMenuDelegate.toggleLeft();
         };
+
+        self.logout = function () {
+            $ionicSideMenuDelegate.toggleLeft();
+            accountService.logout();
+            accountService.initUserContext();
+        }
+
+        self.goTo = function (state) {
+            $state.go(state);
+            $ionicSideMenuDelegate.toggleLeft();
+        }
     }
 
-    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', layoutController]);
+    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state', layoutController]);
 })();
