@@ -13,11 +13,14 @@
                 self.globalLoadingOff();
                 if (data.IsValid === true) {
                     self.pushToNotifications({ value: "Email został wysłany.", type: CONFIG.notificationEnum.success });
+                    console.log("Email został wysłany.");
                 } else {
                     self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                    console.log(data.ValidationErrors);
                 }
             }, function () {
                 self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                console.log(CONFIG.ConnectivityProblemMessage);
                 self.globalLoadingOff();
             });
         }

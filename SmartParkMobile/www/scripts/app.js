@@ -15,6 +15,11 @@
             "email": "email",
             "hash": "hash",
             "name":"name"
+        },
+        ConnectivityProblemMessage: "Wyst�pi� b��d po��czenia, sprawd� ��czno�� z internetem.",
+        notificationEnum: {
+            "error": "error",
+            "success": "success"
         }
     });
 })();
@@ -94,12 +99,13 @@
         var apiEnum = {
             Login: "/Account/Login",
             ChangePassword: "/Manage/ChangePassword",
-            ForgotPassword: "/Account/ForgotPassword",
+            ForgotPassword: "/Account/Forgot",
             OpenGate: "/Parking/OpenGate",
             RefreshCharges: "/Parking/RefreshCharges",
             GetStudentDataWithHeader: "/Test/GetStudentDataWithHeader",
             GetStudentDataWithoutHeader: "/Test/GetStudentDataWithoutHeader",
-            CheckUserHeader: "/Test/CheckUserHeader"
+            CheckUserHeader: "/Test/CheckUserHeader",
+            ChangeEmail: "/Manage/ChangeEmail"
         }
 
         function get(apiUrl, options) {
@@ -132,6 +138,46 @@
     }
 
     angular.module('app').factory('apiFactory', ['$http', '$q', 'CONFIG', apiFactory]);
+})();
+(function () {
+    'use strict';
+
+    function baseCtrl($scope, accountService) {
+        this.globalNotifications = [];
+        this.globalLoading = false;
+
+        this.getNotifications = function () {
+            return this.globalNotifications;
+        }
+
+        this.pushToNotifications = function (notification) {
+            this.globalNotifications.push(notification);
+        }
+
+        this.pushManyToNotifications = function (listOfNotifications, type) {
+            angular.forEach(listOfNotifications, function (value) {
+                this.push({ value: value, type: type });
+            }, this.globalNotifications);
+        }
+
+        this.clearNotifications = function () {
+            this.globalNotifications = [];
+        }
+
+        this.refreshUserContext = function () {
+            this.user = accountService.initUserContext();
+        }
+
+        this.globalLoadingOff = function() {
+            this.globalLoading = false;
+        }
+
+        this.globalLoadingOn = function () {
+            this.globalLoading = true;
+        }
+    }
+
+    angular.module('app').controller('baseCtrl', baseCtrl);
 })();
 (function () {
     'use strict';
@@ -171,6 +217,114 @@
     }
     angular.module('app').factory('localStorageFactory', localStorageFactory);
 })();
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/about/templates/index.html');
+                }
+            ],
+            controller: 'aboutCtrl',
+            controllerAs: 'about'
+        };
+    }
+
+    angular.module('content-about', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/forgot/templates/forgot.html');
+                }
+            ],
+            controller: 'forgotCtrl',
+            controllerAs: 'forgot'
+        };
+    }
+
+    angular.module('content-forgot', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/homepage/templates/index.html');
+                }
+            ],
+            controller: 'homepageCtrl',
+            controllerAs: 'home'
+        };
+    }
+
+    angular.module('content-homepage', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/settings/templates/settings.html');
+                }
+            ],
+            controller: 'settingsCtrl',
+            controllerAs: 'settings'
+        };
+    }
+
+    angular.module('content-settings', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/layout/templates/index.html');
+                }
+            ],
+            controller: 'layoutCtrl',
+            controllerAs: 'layout'
+        };
+    }
+
+    angular.module('content-layout', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
 (function() {
     'use strict';
 
@@ -246,138 +400,48 @@
 
 
 
-(function() {
+(function () {
     'use strict';
 
-    function stateConfig() {
-        return {
-            templateProvider: [
-                '$templateCache',
-                function ($templateCache) {
-                    return $templateCache.get('app/content/forgot/templates/forgot.html');
-                }
-            ],
-            controller: 'forgotCtrl',
-            controllerAs: 'forgotCtrl'
-        };
+    function aboutCtrl($controller, $scope) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
+        var self = this;
     }
 
-    angular.module('content-forgot', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+    angular.module('content-about').controller('aboutCtrl', ['$controller', '$scope', aboutCtrl]);
 })();
 
-
-
-
-(function() {
-    'use strict';
-
-    function stateConfig() {
-        return {
-            templateProvider: [
-                '$templateCache',
-                function ($templateCache) {
-                    return $templateCache.get('app/content/about/templates/index.html');
-                }
-            ],
-            controller: 'aboutCtrl',
-            controllerAs: 'aboutCtrl'
-        };
-    }
-
-    angular.module('content-about', ['appTemplates', 'ionic']).stateConfig = stateConfig();
-})();
-
-
-
-
-(function() {
-    'use strict';
-
-    function stateConfig() {
-        return {
-            templateProvider: [
-                '$templateCache',
-                function ($templateCache) {
-                    return $templateCache.get('app/content/settings/templates/settings.html');
-                }
-            ],
-            controller: 'settingsCtrl',
-            controllerAs: 'settingsCtrl'
-        };
-    }
-
-    angular.module('content-settings', ['appTemplates', 'ionic']).stateConfig = stateConfig();
-})();
-
-
-
-
-(function() {
-    'use strict';
-
-    function stateConfig() {
-        return {
-            templateProvider: [
-                '$templateCache',
-                function ($templateCache) {
-                    return $templateCache.get('app/content/homepage/templates/index.html');
-                }
-            ],
-            controller: 'homepageCtrl',
-            controllerAs: 'homepageCtrl'
-        };
-    }
-
-    angular.module('content-homepage', ['appTemplates', 'ionic']).stateConfig = stateConfig();
-})();
-
-
-
-
-(function() {
-    'use strict';
-
-    function stateConfig() {
-        return {
-            templateProvider: [
-                '$templateCache',
-                function ($templateCache) {
-                    return $templateCache.get('app/content/layout/templates/index.html');
-                }
-            ],
-            controller: 'layoutCtrl',
-            controllerAs: 'layoutCtrl'
-        };
-    }
-
-    angular.module('content-layout', ['appTemplates', 'ionic']).stateConfig = stateConfig();
-})();
 
 
 (function () {
     'use strict';
 
-    function forgotController(accountService, apiFactory) {
+    function forgotController(accountService, apiFactory, $controller, $scope, CONFIG) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
+
         var self = this;
 
         self.forgotPassword = function (email) {
-            self.processing = true;
-            self.error = "";
-            apiFactory.post(apiFactory.apiEnum.forgotPassword, { Email: email }).then(function (data) {
-                self.processing = false;
-                if (data === true) {
-                    self.error = "Email został wysłany.";
+            self.clearNotifications();
+            self.globalLoadingOn();
+            apiFactory.post(apiFactory.apiEnum.ForgotPassword, { Email: email }).then(function (data) {
+                self.globalLoadingOff();
+                if (data.IsValid === true) {
+                    self.pushToNotifications({ value: "Email został wysłany.", type: CONFIG.notificationEnum.success });
+                    console.log("Email został wysłany.");
                 } else {
-                    self.error = "Wystąpił błąd.";
+                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                    console.log(data.ValidationErrors);
                 }
             }, function () {
-                self.error = "Wystąpił błąd połączenia.";
-                self.processing = false;
+                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                console.log(CONFIG.ConnectivityProblemMessage);
+                self.globalLoadingOff();
             });
         }
     }
 
-    angular.module('content-forgot').controller('forgotCtrl', ['accountService', 'apiFactory', '$timeout', forgotController]);
+    angular.module('content-forgot').controller('forgotCtrl', ['accountService', 'apiFactory', '$controller', '$scope', 'CONFIG', forgotController]);
 })();
 
 
@@ -385,101 +449,37 @@
 (function () {
     'use strict';
 
-    function aboutCtrl() {
-        var self = this;
-    }
-
-    angular.module('content-about').controller('aboutCtrl', aboutCtrl);
-})();
-
-
-
-(function () {
-    'use strict';
-
-    function settingsController(accountService, apiFactory) {
-        var self = this;
-
-        self.changePassword = function (code, newCode) {
-            self.processing = true;
-            self.error = "";
-
-            var accData = accountService.getAccountData();
-            apiFactory.post(apiFactory.apiUrlEnum.changeCode, { Email: accData.userEmail, Code: code, NewCode: newCode }).then(function (data) {
-                self.processing = false;
-                if (data.Result.Changed === true) {
-                    self.error = "Hasło zostało zmienione, zaloguj się do aplikacji używając nowego hasła.";
-                    accountService.logout();
-                } else if (data.Changed === false) {
-                    self.error = data.Message === undefined ? "Wystąpił błąd, podane obecne hasło jest niepoprawne." : data.Message;
-                } else {
-                    accountService.logout();
-                    self.loginError = "Takie konto nie istnieje.";
-                }
-            }, function () {
-                self.error = "Wystąpił błąd połączenia.";
-                self.processing = false;
-            });
-        };
-
-        self.changeEmail = function (newEmail, pass) {
-            self.processingEmail = true;
-            self.errorEmail = "";
-
-            var accData = accountService.getAccountData();
-            apiFactory.post(apiFactory.apiUrlEnum.changeEmail, { NewEmail: newEmail, Password: pass, Email: accData.userEmail }).then(function (data) {
-                self.processingEmail = false;
-                self.errorEmail = data.Message;
-                if (data.Changed === true) {
-                    accountService.logout();
-                }
-            }, function () {
-                self.error = "Wystąpił błąd połączenia.";
-                self.processingEmail = false;
-            });
-        };
-
-    }
-
-    angular.module('content-settings').controller('settingsCtrl', ['accountService', 'apiFactory', '$timeout', settingsController]);
-})();
-
-
-
-(function () {
-    'use strict';
-
-    function homepageController(accountService, apiFactory, $timeout) {
+    function homepageController(accountService, apiFactory, $timeout, $controller, $scope, CONFIG) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
 
         var self = this;
-        refreshUserContext();
-        self.countText = "Otwórz bramę!";
+        self.isGateBtnActive = true;
+        self.refreshUserContext();
+        self.gateBtnText = "Otwórz bramę!";
 
         self.login = function (email, password) {
-            self.processing = true;
-            self.loginError = "";
-
-            apiFactory.post(apiFactory.apiEnum.login, { UserName: email, Password: password }).then(function (data) {
-                self.processing = false;
+            self.globalLoadingOn();
+            self.clearNotifications();
+            apiFactory.post(apiFactory.apiEnum.Login, { UserName: email, Password: password }).then(function (data) {
+                self.globalLoadingOff();
                 if (data.IsValid === true) {
                     accountService.login(data.Result.PasswordHash, email, data.Result.Charges, data.Result.Name);
-                    refreshUserContext();
+                    self.refreshUserContext();
+                    console.log("Logged in");
                 } else {
-                    self.loginError = data.ValidationErrors[0];
+                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                    console.log(data.ValidationErrors);
                 }
             }, function () {
-                self.loginError = "Wystąpił błąd logowania.";
-                self.processing = false;
+                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                self.globalLoadingOff();
+                console.log(CONFIG.ConnectivityProblemMessage);
             });
         }
 
-        self.logout = function () { 
+        self.logout = function () {
             accountService.logout();
-            refreshUserContext();
-        }
-
-        function refreshUserContext() {
-            self.user = accountService.initUserContext();
+            self.refreshUserContext();
         }
 
         var i = 5;
@@ -487,70 +487,81 @@
             if (i !== 0) {
                 $timeout(function () {
                     i--;
-                    self.countText = i + "...";
+                    self.gateBtnText = i + "...";
                     removeDisabled();
                 }, 1000);
             }
             if (i === 0) {
-                self.turnOff = false;
-                self.countText = "Otwórz bramę!";
+                self.isGateBtnActive = true;
+                self.gateBtnText = "Otwórz bramę!";
                 i = 5;
             }
         }
-        
-        self.openGates = function () {
-            refreshUserContext();
-            var accData = accountService.getAccountData();
-            if (accData.loggedIn === true) {
-                self.turnOff = true;
-                self.processing = true;
-                self.gateError = "";
 
-                apiFactory.post(apiFactory.apiEnum.openGate, { Email: accData.userEmail }).then(function (data) {
-                    self.processing = false;
-                    if (data !== null) {
+        self.openGates = function () {
+            self.isGateBtnActive = false;
+            self.clearNotifications();
+            self.refreshUserContext();
+            if (self.user.loggedIn === true) {
+
+                self.globalLoadingOn();
+                apiFactory.post(apiFactory.apiEnum.OpenGate, { Email: self.user.userEmail }).then(function (data) {
+                    self.globalLoadingOff();
+                    if (data.IsValid === true) {
                         accountService.updateCharges(data.Result);
-                        refreshUserContext();
-                        if (data !== 0) {
-                            self.countText = 5 + "...";
+                        self.refreshUserContext();
+                        if (data.Result !== 0) {
+                            self.gateBtnText = 5 + "...";
                             removeDisabled();
+                            console.log("Opened");
                         } else {
-                            self.gateError = "Brak wyjazdów.";
-                            self.turnOff = false;
+                            self.pushToNotifications({ value: "Brak wyjazdów.", type: CONFIG.notificationEnum.error });
+                            self.isGateBtnActive = true;
+                            console.log("Brak wyjazdów.");
                         }
                     } else {
-                        self.turnOff = false;
+                        self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                        self.isGateBtnActive = true;
                         window.localStorage.clear();
-                        refreshUserContext();
+                        self.refreshUserContext();
+                        console.log(data.ValidationErrors);
                     }
                 }, function () {
-                    self.turnOff = false;
-                    self.processing = false;
-                    self.gateError = "Wystąpił błąd połączenia.";
+                    self.isGateBtnActive = true;
+                    self.globalLoadingOff();
+                    self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                    console.log(CONFIG.ConnectivityProblemMessage);
                 });
             }
         }
 
         self.refresh = function () {
-            refreshUserContext();
+            self.clearNotifications();
+            self.refreshUserContext();
             if (self.user.loggedIn === true) {
-                self.processingRefresh = true;
-                self.refreshError = "";
-
-                apiFactory.post(apiFactory.apiEnum.refreshCharges, { Email: self.user.userEmail }).then(function (data) {
-                    self.processingRefresh = false;
-                    accountService.updateCharges(data.Result);
-                    refreshUserContext();
+                self.globalLoadingOn();
+                self.clearNotifications();
+                apiFactory.post(apiFactory.apiEnum.RefreshCharges, { Email: self.user.userEmail }).then(function (data) {
+                    self.globalLoadingOff();
+                    if (data.IsValid === true) {
+                        accountService.updateCharges(data.Result);
+                        self.refreshUserContext();
+                        console.log("refreshed");
+                    } else {
+                        self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                        console.log(data.ValidationErrors);
+                    }
                 }, function () {
-                    self.refreshError = "Wystąpił błąd połączenia.";
-                    self.processingRefresh = false;
+                    self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                    self.globalLoadingOff();
+                    console.log(CONFIG.ConnectivityProblemMessage);
                 });
             }
         };
 
     }
 
-    angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout', homepageController]);
+    angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout' , '$controller', '$scope', 'CONFIG', homepageController]);
 })();
 
 
@@ -558,7 +569,70 @@
 (function () {
     'use strict';
 
-    function layoutController($ionicSideMenuDelegate, accountService, $state) {
+    function settingsController(accountService, apiFactory, $controller, $scope, CONFIG, $state) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
+
+        var self = this;
+
+        self.changePassword = function (password, newPassword) {
+            self.clearNotifications();
+            self.globalLoadingOn();
+            self.refreshUserContext();
+
+            apiFactory.post(apiFactory.apiEnum.ChangePassword, { Email: self.user.userEmail, OldPassword: password, NewPassword: newPassword, NewPasswordRepeat: newPassword }).then(function (data) {
+                self.globalLoadingOff();
+                if (data.IsValid) {
+                    self.pushToNotifications({ value: "Hasło zostało zmienione, zaloguj się do aplikacji używając nowego hasła.", type: CONFIG.notificationEnum.success });
+                    accountService.logout();
+                    console.log("Hasło zostało zmienione, zaloguj się do aplikacji używając nowego hasła.");
+                    $state.go("app.homepage");
+                } else {
+                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                    console.log(data.ValidationErrors);
+                }
+            }, function () {
+                self.globalLoadingOff();
+                console.log(CONFIG.ConnectivityProblemMessage);
+                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+            });
+        };
+
+        self.changeEmail = function (newEmail, pass) {
+            self.clearNotifications();
+            self.globalLoadingOn();
+            self.refreshUserContext();
+
+            apiFactory.post(apiFactory.apiEnum.ChangeEmail, { NewEmail: newEmail, Password: pass, Email: self.user.userEmail }).then(function (data) {
+                self.globalLoadingOff();
+                self.errorEmail = data.Message;
+                if (data.IsValid === true) {
+                    self.pushToNotifications({ value: "Email został zmieniony, zaloguj się do aplikacji używając nowego emaila.", type: CONFIG.notificationEnum.success });
+                    accountService.logout();
+                    console.log("Email został zmieniony, zaloguj się do aplikacji używając nowego emaila.");
+                    $state.go("app.homepage");
+                } else {
+                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                    console.log(data.ValidationErrors);
+                }
+            }, function () {
+                self.globalLoadingOff();
+                console.log(CONFIG.ConnectivityProblemMessage);
+                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+            });
+        };
+
+    }
+
+    angular.module('content-settings').controller('settingsCtrl', ['accountService', 'apiFactory', '$controller', '$scope', 'CONFIG', '$state', settingsController]);
+})();
+
+
+
+(function () {
+    'use strict';
+
+    function layoutController($ionicSideMenuDelegate, accountService, $state, $controller, $scope) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
         var self = this;
 
         self.getUserContext = function() {
@@ -573,6 +647,8 @@
             $ionicSideMenuDelegate.toggleLeft();
             accountService.logout();
             accountService.initUserContext();
+            $state.go('app.homepage');
+            console.log("loggedOut");
         }
 
         self.goTo = function (state) {
@@ -581,5 +657,5 @@
         }
     }
 
-    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state', layoutController]);
+    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state','$controller','$scope', layoutController]);
 })();

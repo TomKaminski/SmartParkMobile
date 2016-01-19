@@ -1,5 +1,5 @@
-﻿<ion-view title="SmartPark - Forgot Password">
-    <ion-content has-bouncing="true" overflow-scroll="false">
+﻿<ion-view title="SmartPark - Zapomniane hasło">
+    <ion-content has-bouncing="false" overflow-scroll="false">
         <div class="col-80 col-offset-10 margin-top-20">
             <img src="../img/logo.png" />
         </div>
@@ -21,10 +21,9 @@
                           ng-show="form.email.$error.email && form.email.$touched">To nie jest prawidłowy adres email!</span>
                 </label>
             </div>
-            <p class="text-center form-error" ng-show="forgotCtrl.error!=''">{{forgotCtrl.error}}</p>
-            <button class="button button-full button-positive" ng-click="forgotCtrl.forgotPassword(email)" ng-class="{'disabled':form.$invalid || forgotCtrl.processing==true}">
-                <span class="icon" ng-class="{'changeCodeContent':!forgotCtrl.processing}"></span>
-                <ion-spinner icon="spiral" class="spinner-light" ng-if="forgotCtrl.processing"></ion-spinner>
+            <button class="button button-full button-positive" ng-click="forgot.forgotPassword(email)" ng-class="{'disabled':form.$invalid}">
+                Potwierdź
+                <!--<ion-spinner icon="spiral" class="spinner-light" ng-if="forgotCtrl.processing"></ion-spinner>-->
             </button>
         </div>
     </ion-content>

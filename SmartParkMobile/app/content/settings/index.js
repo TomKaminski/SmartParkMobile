@@ -10,7 +10,7 @@
                 }
             ],
             controller: 'settingsCtrl',
-            controllerAs: 'settingsCtrl'
+            controllerAs: 'settings'
         };
     }
 

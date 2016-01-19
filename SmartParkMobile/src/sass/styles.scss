@@ -9,7 +9,14 @@ p, img, h1, h2, h3, h4, h5, div {
     -ms-user-select: none !important;
     -webkit-user-select: none !important;
     user-select: none !important;
+    cursor: default;
 }
+
+a{
+    cursor: pointer
+}
+
+
 
 img{
     height:auto;
@@ -55,24 +62,8 @@ img{
     color: red !important;
 }
 
-.zalogujContent:before {
-    content: "Zaloguj";
-    vertical-align: middle;
-    text-align: center;
-    text-overflow: ellipsis;
-    font-size: 16px !important;
-}
-
 .no-padding {
     padding: 0;
-}
-
-.changeCodeContent:before {
-    content: "Potwierdź";
-    vertical-align: middle;
-    text-align: center;
-    text-overflow: ellipsis;
-    font-size: 16px !important;
 }
 
 .refreshIcon{

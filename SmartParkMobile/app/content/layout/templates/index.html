@@ -3,7 +3,7 @@
     <ion-side-menu-content>
         <ion-nav-bar class="bar-dark">
             <ion-nav-buttons side="left">
-                <button class="button button-icon button-clear ion-navicon" ng-click="layoutCtrl.toggleLeft()"></button>
+                <button class="button button-icon button-clear ion-navicon" ng-click="layout.toggleLeft()"></button>
             </ion-nav-buttons>
         </ion-nav-bar>
         <ion-nav-view name="content"></ion-nav-view>
@@ -13,19 +13,19 @@
         <ion-header-bar class="bar-assertive">
             <h1 class="title">Left Menu</h1>
         </ion-header-bar>
-        <ion-content>
+        <ion-content  overflow-scroll="false" has-bouncing="false">
             <div class="list" id="layoutList">
-                <div ng-if="layoutCtrl.getUserContext().loggedIn===true">
-                    <div class="item"><b>Witaj, {{layoutCtrl.getUserContext().userName}}</b></div>
-                    <div class="item" ng-click="layoutCtrl.goTo('app.homepage')">Home</div>
-                    <div class="item" ng-click="layoutCtrl.goTo('app.settings')">Ustawienia</div>
-                    <div class="item" ng-click="layoutCtrl.logout()">Wyloguj</div>
+                <div ng-if="layout.getUserContext().loggedIn===true">
+                    <div class="item"><b>Witaj, {{layout.getUserContext().userName}}</b></div>
+                    <div class="item" ng-click="layout.goTo('app.homepage')">Home</div>
+                    <div class="item" ng-click="layout.goTo('app.settings')">Ustawienia</div>
+                    <div class="item" ng-click="layout.logout()">Wyloguj</div>
                 </div>
-                <div ng-if="layoutCtrl.getUserContext().loggedIn===false">
-                    <div class="item" ng-click="layoutCtrl.goTo('app.homepage')">Home</div>
-                    <div class="item" ng-click="layoutCtrl.goTo('app.forgot')">Zapomniane hasło</div>
+                <div ng-if="layout.getUserContext().loggedIn===false">
+                    <div class="item" ng-click="layout.goTo('app.homepage')">Home</div>
+                    <div class="item" ng-click="layout.goTo('app.forgot')">Zapomniane hasło</div>
                 </div>
-                <div class="item" ng-click="layoutCtrl.goTo('app.about')">O aplikacji</div>
+                <div class="item" ng-click="layout.goTo('app.about')">O aplikacji</div>
             </div>
         </ion-content>
     </ion-side-menu>

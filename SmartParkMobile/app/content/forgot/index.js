@@ -10,7 +10,7 @@
                 }
             ],
             controller: 'forgotCtrl',
-            controllerAs: 'forgotCtrl'
+            controllerAs: 'forgot'
         };
     }
 

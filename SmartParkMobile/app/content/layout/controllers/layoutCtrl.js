@@ -1,7 +1,8 @@
 ﻿(function () {
     'use strict';
 
-    function layoutController($ionicSideMenuDelegate, accountService, $state) {
+    function layoutController($ionicSideMenuDelegate, accountService, $state, $controller, $scope) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
         var self = this;
 
         self.getUserContext = function() {
@@ -16,6 +17,8 @@
             $ionicSideMenuDelegate.toggleLeft();
             accountService.logout();
             accountService.initUserContext();
+            $state.go('app.homepage');
+            console.log("loggedOut");
         }
 
         self.goTo = function (state) {
@@ -24,5 +27,5 @@
         }
     }
 
-    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state', layoutController]);
+    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state','$controller','$scope', layoutController]);
 })();

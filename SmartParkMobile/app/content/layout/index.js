@@ -10,7 +10,7 @@
                 }
             ],
             controller: 'layoutCtrl',
-            controllerAs: 'layoutCtrl'
+            controllerAs: 'layout'
         };
     }
 

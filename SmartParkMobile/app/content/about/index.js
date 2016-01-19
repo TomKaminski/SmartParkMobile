@@ -10,7 +10,7 @@
                 }
             ],
             controller: 'aboutCtrl',
-            controllerAs: 'aboutCtrl'
+            controllerAs: 'about'
         };
     }
 

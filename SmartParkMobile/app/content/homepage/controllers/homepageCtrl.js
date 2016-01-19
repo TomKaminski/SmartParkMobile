@@ -5,6 +5,7 @@
         angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
 
         var self = this;
+        self.isGateBtnActive = true;
         self.refreshUserContext();
         self.gateBtnText = "Otwórz bramę!";
 
@@ -16,12 +17,15 @@
                 if (data.IsValid === true) {
                     accountService.login(data.Result.PasswordHash, email, data.Result.Charges, data.Result.Name);
                     self.refreshUserContext();
+                    console.log("Logged in");
                 } else {
                     self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                    console.log(data.ValidationErrors);
                 }
             }, function () {
                 self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
                 self.globalLoadingOff();
+                console.log(CONFIG.ConnectivityProblemMessage);
             });
         }
 
@@ -47,10 +51,11 @@
         }
 
         self.openGates = function () {
+            self.isGateBtnActive = false;
             self.clearNotifications();
             self.refreshUserContext();
             if (self.user.loggedIn === true) {
-                self.isGateBtnActive = true;
+
                 self.globalLoadingOn();
                 apiFactory.post(apiFactory.apiEnum.OpenGate, { Email: self.user.userEmail }).then(function (data) {
                     self.globalLoadingOff();
@@ -60,20 +65,24 @@
                         if (data.Result !== 0) {
                             self.gateBtnText = 5 + "...";
                             removeDisabled();
+                            console.log("Opened");
                         } else {
                             self.pushToNotifications({ value: "Brak wyjazdów.", type: CONFIG.notificationEnum.error });
                             self.isGateBtnActive = true;
+                            console.log("Brak wyjazdów.");
                         }
                     } else {
                         self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
                         self.isGateBtnActive = true;
                         window.localStorage.clear();
                         self.refreshUserContext();
+                        console.log(data.ValidationErrors);
                     }
                 }, function () {
                     self.isGateBtnActive = true;
                     self.globalLoadingOff();
                     self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+                    console.log(CONFIG.ConnectivityProblemMessage);
                 });
             }
         }
@@ -89,12 +98,15 @@
                     if (data.IsValid === true) {
                         accountService.updateCharges(data.Result);
                         self.refreshUserContext();
+                        console.log("refreshed");
                     } else {
                         self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+                        console.log(data.ValidationErrors);
                     }
                 }, function () {
                     self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
                     self.globalLoadingOff();
+                    console.log(CONFIG.ConnectivityProblemMessage);
                 });
             }
         };

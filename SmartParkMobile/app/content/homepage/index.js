@@ -10,7 +10,7 @@
                 }
             ],
             controller: 'homepageCtrl',
-            controllerAs: 'homepageCtrl'
+            controllerAs: 'home'
         };
     }
 
