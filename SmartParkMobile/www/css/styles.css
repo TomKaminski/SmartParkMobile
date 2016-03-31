@@ -1,7 +1,20 @@
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 500;
+  src: local("Titillium Web"), local("TitilliumWeb-Regular"), url(../fonts/TitilliumWeb-Regular.ttf) format("truetype"); }
+
+@font-face {
+  font-family: 'Titillium Web Light';
+  font-style: normal;
+  font-weight: 300;
+  src: local("Titillium Web"), local("TitilliumWeb-Light"), url(../fonts/TitilliumWeb-Light.ttf) format("truetype"); }
+
 html, body {
   background: #ddd;
   color: #333;
-  font-size: 24px; }
+  font-size: 24px;
+  font-family: 'Titillium Web'; }
 
 p, img, h1, h2, h3, h4, h5, div {
   -moz-user-select: none !important;
@@ -91,3 +104,66 @@ ion-spinner svg, .center {
   color: black;
   text-decoration: none;
   text-align: center; }
+
+.bar-smart-blue {
+  background: #4a86c5;
+  color: white;
+  border-color: #1c445f;
+  border-top: 1px solid; }
+  .bar-smart-blue .button-icon {
+    color: white; }
+  .bar-smart-blue .title {
+    color: white;
+    font-family: 'Titillium Web Light';
+    font-size: 15px !important;
+    display: flex;
+    line-height: 30px !important;
+    padding: 7px; }
+    .bar-smart-blue .title img {
+      max-height: 100%;
+      width: auto;
+      margin-right: 10px; }
+
+.side-menu-smart-blue {
+  background: #6ea2d8;
+  color: white; }
+  .side-menu-smart-blue .list .item {
+    background: #6ea2d8;
+    color: white;
+    border: none;
+    margin: 0 -1px;
+    padding: 20px 10px;
+    position: relative;
+    font-family: 'Titillium Web Light';
+    font-size: 16px;
+    text-transform: uppercase; }
+    .side-menu-smart-blue .list .item i {
+      font-size: 32px;
+      margin: 0 10px; }
+    .side-menu-smart-blue .list .item img {
+      height: 32px;
+      width: auto;
+      margin: 0 10px;
+      padding-top: 5px; }
+    .side-menu-smart-blue .list .item .border-bottom-fixed {
+      border-bottom: 3px solid #1c445f !important;
+      position: absolute;
+      bottom: 0;
+      width: 65%;
+      right: 35%; }
+  .side-menu-smart-blue .side-menu-logo {
+    margin-top: 10px; }
+    .side-menu-smart-blue .side-menu-logo .menu-text {
+      font-family: 'Titillium Web Light';
+      font-size: 18px;
+      text-align: center;
+      padding-bottom: 2px;
+      font-weight: bold;
+      display: flex;
+      flex-direction: column-reverse; }
+  .side-menu-smart-blue .sidenav-copyright {
+    font-family: 'Titillium Web Light';
+    font-size: 16px;
+    text-align: center; }
+    .side-menu-smart-blue .sidenav-copyright .copyright-sign {
+      font-size: 32px; }

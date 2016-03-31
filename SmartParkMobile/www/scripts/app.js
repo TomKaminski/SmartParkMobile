@@ -291,6 +291,26 @@
             templateProvider: [
                 '$templateCache',
                 function ($templateCache) {
+                    return $templateCache.get('app/content/layout/templates/index.html');
+                }
+            ],
+            controller: 'layoutCtrl',
+            controllerAs: 'layout'
+        };
+    }
+
+    angular.module('content-layout', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
                     return $templateCache.get('app/content/settings/templates/settings.html');
                 }
             ],
@@ -303,26 +323,6 @@
 })();
 
 
-
-
-(function() {
-    'use strict';
-
-    function stateConfig() {
-        return {
-            templateProvider: [
-                '$templateCache',
-                function ($templateCache) {
-                    return $templateCache.get('app/content/layout/templates/index.html');
-                }
-            ],
-            controller: 'layoutCtrl',
-            controllerAs: 'layout'
-        };
-    }
-
-    angular.module('content-layout', ['appTemplates', 'ionic']).stateConfig = stateConfig();
-})();
 
 
 (function() {
@@ -569,6 +569,37 @@
 (function () {
     'use strict';
 
+    function layoutController($ionicSideMenuDelegate, accountService, $state, $controller, $scope) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
+        var self = this;
+
+        self.getUserContext = function() {
+            return accountService.initUserContext();
+        }
+
+        self.toggleLeft = function () {
+            $ionicSideMenuDelegate.toggleLeft();
+        };
+
+        self.logout = function () {
+            $ionicSideMenuDelegate.toggleLeft();
+            accountService.logout();
+            accountService.initUserContext();
+            $state.go('app.homepage');
+            console.log("loggedOut");
+        }
+
+        self.goTo = function (state) {
+            $state.go(state);
+            $ionicSideMenuDelegate.toggleLeft();
+        }
+    }
+
+    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state','$controller','$scope', layoutController]);
+})();
+(function () {
+    'use strict';
+
     function settingsController(accountService, apiFactory, $controller, $scope, CONFIG, $state) {
         angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
 
@@ -627,35 +658,3 @@
 })();
 
 
-
-(function () {
-    'use strict';
-
-    function layoutController($ionicSideMenuDelegate, accountService, $state, $controller, $scope) {
-        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
-        var self = this;
-
-        self.getUserContext = function() {
-            return accountService.initUserContext();
-        }
-
-        self.toggleLeft = function () {
-            $ionicSideMenuDelegate.toggleLeft();
-        };
-
-        self.logout = function () {
-            $ionicSideMenuDelegate.toggleLeft();
-            accountService.logout();
-            accountService.initUserContext();
-            $state.go('app.homepage');
-            console.log("loggedOut");
-        }
-
-        self.goTo = function (state) {
-            $state.go(state);
-            $ionicSideMenuDelegate.toggleLeft();
-        }
-    }
-
-    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state','$controller','$scope', layoutController]);
-})();

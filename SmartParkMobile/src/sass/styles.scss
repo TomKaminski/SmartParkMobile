@@ -1,7 +1,22 @@
-﻿html, body {
-  background: #ddd;
-  color: #333;
-  font-size: 24px;
+﻿@font-face {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Titillium Web'), local('TitilliumWeb-Regular'), url(../fonts/TitilliumWeb-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Titillium Web Light';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Titillium Web'), local('TitilliumWeb-Light'), url(../fonts/TitilliumWeb-Light.ttf) format('truetype');
+}
+
+html, body {
+    background: #ddd;
+    color: #333;
+    font-size: 24px;
+    font-family: 'Titillium Web';
 }
 
 p, img, h1, h2, h3, h4, h5, div {
@@ -12,31 +27,31 @@ p, img, h1, h2, h3, h4, h5, div {
     cursor: default;
 }
 
-a{
-    cursor: pointer
+a {
+    cursor: pointer;
 }
 
 
 
-img{
-    height:auto;
-    width:100%
+img {
+    height: auto;
+    width: 100%;
 }
 
-.margin-bottom-20{
-    margin-bottom:20px;
+.margin-bottom-20 {
+    margin-bottom: 20px;
 }
 
-.margin-bottom-40{
-    margin-bottom:40px;
+.margin-bottom-40 {
+    margin-bottom: 40px;
 }
 
-.margin-top-20{
-    margin-top:20px;
+.margin-top-20 {
+    margin-top: 20px;
 }
 
-.margin-top-40{
-    margin-top:40px;
+.margin-top-40 {
+    margin-top: 40px;
 }
 
 
@@ -66,9 +81,9 @@ img{
     padding: 0;
 }
 
-.refreshIcon{
+.refreshIcon {
     font-size: 16px !important;
-    padding:0
+    padding: 0;
 }
 
 .no-padding-border {
@@ -107,8 +122,100 @@ ion-spinner svg, .center {
     margin: auto;
 }
 
-#layoutList .item > a{
+#layoutList .item > a {
     color: black;
     text-decoration: none;
-    text-align: center
+    text-align: center;
+}
+
+
+// ############ NAVBAR ################### //
+
+.bar-smart-blue {
+    background: #4a86c5;
+    color: white;
+    border-color: #1c445f;
+    border-top: 1px solid;
+
+    .button-icon {
+        color: white;
+    }
+
+    .title {
+        color: white;
+        font-family: 'Titillium Web Light';
+        font-size: 15px !important;
+        display: flex;
+        line-height: 30px !important;
+        padding: 7px;
+
+        img {
+            max-height: 100%;
+            width: auto;
+            margin-right: 10px;
+        }
+    }
+}
+
+.side-menu-smart-blue {
+    background: #6ea2d8;
+    color: white;
+
+    .list .item {
+        background: #6ea2d8;
+        color: white;
+        border: none;
+        margin: 0 -1px;
+        padding: 20px 10px;
+        position: relative;
+        font-family: 'Titillium Web Light';
+        font-size: 16px;
+        text-transform: uppercase;
+
+        i {
+            font-size: 32px;
+            margin: 0 10px;
+        }
+
+        img {
+            height: 32px;
+            width: auto;
+            margin: 0 10px;
+            padding-top: 5px;
+        }
+
+        .border-bottom-fixed {
+            border-bottom: 3px solid #1c445f !important;
+            position: absolute;
+            bottom: 0;
+            width: 65%;
+            right: 35%;
+        }
+    }
+
+    .side-menu-logo {
+        margin-top: 10px;
+
+        .menu-text {
+            font-family: 'Titillium Web Light';
+            font-size: 18px;
+            text-align: center;
+            padding-bottom: 2px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+    }
+
+
+
+    .sidenav-copyright {
+        font-family: 'Titillium Web Light';
+        font-size: 16px;
+        text-align: center;
+
+        .copyright-sign {
+            font-size: 32px;
+        }
+    }
 }
