@@ -105,4 +105,5 @@
     <splash src="res/screens/wp8/SplashScreenImage.jpg" width="480" height="800" />
   </platform>
   <preference name="Fullscreen" value="True" />
+  <plugin name="cordova-plugin-x-toast" version="2.5.0" src="https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git" />
 </widget>

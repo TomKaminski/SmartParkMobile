@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('app', ['app-routes', 'appTemplates']);
+    var app = angular.module('app', ['app-routes', 'appTemplates','ngCordova']);
 
     app.config(function ($httpProvider) {
         $httpProvider.interceptors.push('httpRequestInterceptorFactory');

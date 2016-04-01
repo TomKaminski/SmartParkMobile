@@ -34,8 +34,8 @@ a {
 
 
 img {
+    max-width: 100%;
     height: auto;
-    width: 100%;
 }
 
 .margin-bottom-20 {
@@ -70,11 +70,13 @@ img {
 }
 
 .has-error {
-    border: 1px solid red !important;
+    border-color: red !important;
 }
 
 .form-error {
     color: red !important;
+    font-weight: normal;
+    font-family: 'Titillium Web Light';
 }
 
 .no-padding {
@@ -217,5 +219,39 @@ ion-spinner svg, .center {
         .copyright-sign {
             font-size: 32px;
         }
+    }
+}
+
+
+// ########### LOGIN SECTION ############ //
+
+#login-section {
+    margin-top: 80px;
+
+    h1 {
+        font-size: 40px;
+        color: #4a86c5;
+        font-family: 'Titillium Web Light';
+        text-align: center;
+        line-height: 42px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 40px;
+
+        img {
+            height: 40px;
+            margin-right: 5px;
+        }
+    }
+
+    .smart-input {
+        border: none;
+        border-bottom: 2px solid grey;
+    }
+
+    .smart-label {
+        font-family: 'Titillium Web Light';
+        color: #4a86c5;
     }
 }

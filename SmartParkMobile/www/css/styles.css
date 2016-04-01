@@ -27,8 +27,8 @@ a {
   cursor: pointer; }
 
 img {
-  height: auto;
-  width: 100%; }
+  max-width: 100%;
+  height: auto; }
 
 .margin-bottom-20 {
   margin-bottom: 20px; }
@@ -54,10 +54,12 @@ img {
   margin-top: 0; }
 
 .has-error {
-  border: 1px solid red !important; }
+  border-color: red !important; }
 
 .form-error {
-  color: red !important; }
+  color: red !important;
+  font-weight: normal;
+  font-family: 'Titillium Web Light'; }
 
 .no-padding {
   padding: 0; }
@@ -167,3 +169,25 @@ ion-spinner svg, .center {
     text-align: center; }
     .side-menu-smart-blue .sidenav-copyright .copyright-sign {
       font-size: 32px; }
+
+#login-section {
+  margin-top: 80px; }
+  #login-section h1 {
+    font-size: 40px;
+    color: #4a86c5;
+    font-family: 'Titillium Web Light';
+    text-align: center;
+    line-height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px; }
+    #login-section h1 img {
+      height: 40px;
+      margin-right: 5px; }
+  #login-section .smart-input {
+    border: none;
+    border-bottom: 2px solid grey; }
+  #login-section .smart-label {
+    font-family: 'Titillium Web Light';
+    color: #4a86c5; }

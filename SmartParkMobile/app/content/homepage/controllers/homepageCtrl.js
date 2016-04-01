@@ -1,7 +1,7 @@
 ﻿(function () {
     'use strict';
 
-    function homepageController(accountService, apiFactory, $timeout, $controller, $scope, CONFIG) {
+    function homepageController(accountService, apiFactory, $timeout, $controller, $scope, CONFIG, $cordovaToast) {
         angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
 
         var self = this;
@@ -10,23 +10,26 @@
         self.gateBtnText = "Otwórz bramę!";
 
         self.login = function (email, password) {
-            self.globalLoadingOn();
-            self.clearNotifications();
-            apiFactory.post(apiFactory.apiEnum.Login, { UserName: email, Password: password }).then(function (data) {
-                self.globalLoadingOff();
-                if (data.IsValid === true) {
-                    accountService.login(data.Result.PasswordHash, email, data.Result.Charges, data.Result.Name);
-                    self.refreshUserContext();
-                    console.log("Logged in");
-                } else {
-                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
-                    console.log(data.ValidationErrors);
-                }
-            }, function () {
-                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
-                self.globalLoadingOff();
-                console.log(CONFIG.ConnectivityProblemMessage);
-            });
+            $cordovaToast
+                .showLongBottom('Here is a message', 'long', 'center', function(a) { console.log('toast success: ' + a) }, function(b) { alert('toast error: ' + b) });
+
+            //self.globalLoadingOn();
+            //self.clearNotifications();
+            //apiFactory.post(apiFactory.apiEnum.Login, { UserName: email, Password: password }).then(function (data) {
+            //    self.globalLoadingOff();
+            //    if (data.IsValid === true) {
+            //        accountService.login(data.Result.PasswordHash, email, data.Result.Charges, data.Result.Name);
+            //        self.refreshUserContext();
+            //        console.log("Logged in");
+            //    } else {
+            //        self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+            //        console.log(data.ValidationErrors);
+            //    }
+            //}, function () {
+            //    self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+            //    self.globalLoadingOff();
+            //    console.log(CONFIG.ConnectivityProblemMessage);
+            //});
         }
 
         self.logout = function () {
@@ -113,7 +116,7 @@
 
     }
 
-    angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout' , '$controller', '$scope', 'CONFIG', homepageController]);
+    angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout', '$controller', '$scope', 'CONFIG', '$cordovaToast', homepageController]);
 })();
 
 

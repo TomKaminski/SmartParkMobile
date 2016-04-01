@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('app', ['app-routes', 'appTemplates']);
+    var app = angular.module('app', ['app-routes', 'appTemplates','ngCordova']);
 
     app.config(function ($httpProvider) {
         $httpProvider.interceptors.push('httpRequestInterceptorFactory');
@@ -225,28 +225,6 @@
             templateProvider: [
                 '$templateCache',
                 function ($templateCache) {
-                    return $templateCache.get('app/content/about/templates/index.html');
-                }
-            ],
-            controller: 'aboutCtrl',
-            controllerAs: 'about'
-        };
-    }
-
-    angular.module('content-about', ['appTemplates', 'ionic']).stateConfig = stateConfig();
-})();
-
-
-
-
-(function() {
-    'use strict';
-
-    function stateConfig() {
-        return {
-            templateProvider: [
-                '$templateCache',
-                function ($templateCache) {
                     return $templateCache.get('app/content/forgot/templates/forgot.html');
                 }
             ],
@@ -269,15 +247,15 @@
             templateProvider: [
                 '$templateCache',
                 function ($templateCache) {
-                    return $templateCache.get('app/content/homepage/templates/index.html');
+                    return $templateCache.get('app/content/about/templates/index.html');
                 }
             ],
-            controller: 'homepageCtrl',
-            controllerAs: 'home'
+            controller: 'aboutCtrl',
+            controllerAs: 'about'
         };
     }
 
-    angular.module('content-homepage', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+    angular.module('content-about', ['appTemplates', 'ionic']).stateConfig = stateConfig();
 })();
 
 
@@ -301,6 +279,28 @@
 
     angular.module('content-layout', ['appTemplates', 'ionic']).stateConfig = stateConfig();
 })();
+
+
+(function() {
+    'use strict';
+
+    function stateConfig() {
+        return {
+            templateProvider: [
+                '$templateCache',
+                function ($templateCache) {
+                    return $templateCache.get('app/content/homepage/templates/index.html');
+                }
+            ],
+            controller: 'homepageCtrl',
+            controllerAs: 'home'
+        };
+    }
+
+    angular.module('content-homepage', ['appTemplates', 'ionic']).stateConfig = stateConfig();
+})();
+
+
 
 
 (function() {
@@ -403,19 +403,6 @@
 (function () {
     'use strict';
 
-    function aboutCtrl($controller, $scope) {
-        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
-        var self = this;
-    }
-
-    angular.module('content-about').controller('aboutCtrl', ['$controller', '$scope', aboutCtrl]);
-})();
-
-
-
-(function () {
-    'use strict';
-
     function forgotController(accountService, apiFactory, $controller, $scope, CONFIG) {
         angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
 
@@ -449,7 +436,51 @@
 (function () {
     'use strict';
 
-    function homepageController(accountService, apiFactory, $timeout, $controller, $scope, CONFIG) {
+    function aboutCtrl($controller, $scope) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
+        var self = this;
+    }
+
+    angular.module('content-about').controller('aboutCtrl', ['$controller', '$scope', aboutCtrl]);
+})();
+
+
+
+(function () {
+    'use strict';
+
+    function layoutController($ionicSideMenuDelegate, accountService, $state, $controller, $scope) {
+        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
+        var self = this;
+
+        self.getUserContext = function() {
+            return accountService.initUserContext();
+        }
+
+        self.toggleLeft = function () {
+            $ionicSideMenuDelegate.toggleLeft();
+        };
+
+        self.logout = function () {
+            $ionicSideMenuDelegate.toggleLeft();
+            accountService.logout();
+            accountService.initUserContext();
+            $state.go('app.homepage');
+            console.log("loggedOut");
+        }
+
+        self.goTo = function (state) {
+            $state.go(state);
+            $ionicSideMenuDelegate.toggleLeft();
+        }
+    }
+
+    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state','$controller','$scope', layoutController]);
+})();
+(function () {
+    'use strict';
+
+    function homepageController(accountService, apiFactory, $timeout, $controller, $scope, CONFIG, $cordovaToast) {
         angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
 
         var self = this;
@@ -458,23 +489,26 @@
         self.gateBtnText = "Otwórz bramę!";
 
         self.login = function (email, password) {
-            self.globalLoadingOn();
-            self.clearNotifications();
-            apiFactory.post(apiFactory.apiEnum.Login, { UserName: email, Password: password }).then(function (data) {
-                self.globalLoadingOff();
-                if (data.IsValid === true) {
-                    accountService.login(data.Result.PasswordHash, email, data.Result.Charges, data.Result.Name);
-                    self.refreshUserContext();
-                    console.log("Logged in");
-                } else {
-                    self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
-                    console.log(data.ValidationErrors);
-                }
-            }, function () {
-                self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
-                self.globalLoadingOff();
-                console.log(CONFIG.ConnectivityProblemMessage);
-            });
+            $cordovaToast
+                .showLongBottom('Here is a message', 'long', 'center', function(a) { console.log('toast success: ' + a) }, function(b) { alert('toast error: ' + b) });
+
+            //self.globalLoadingOn();
+            //self.clearNotifications();
+            //apiFactory.post(apiFactory.apiEnum.Login, { UserName: email, Password: password }).then(function (data) {
+            //    self.globalLoadingOff();
+            //    if (data.IsValid === true) {
+            //        accountService.login(data.Result.PasswordHash, email, data.Result.Charges, data.Result.Name);
+            //        self.refreshUserContext();
+            //        console.log("Logged in");
+            //    } else {
+            //        self.pushManyToNotifications(data.ValidationErrors, CONFIG.notificationEnum.error);
+            //        console.log(data.ValidationErrors);
+            //    }
+            //}, function () {
+            //    self.pushToNotifications({ value: CONFIG.ConnectivityProblemMessage, type: CONFIG.notificationEnum.error });
+            //    self.globalLoadingOff();
+            //    console.log(CONFIG.ConnectivityProblemMessage);
+            //});
         }
 
         self.logout = function () {
@@ -561,42 +595,11 @@
 
     }
 
-    angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout' , '$controller', '$scope', 'CONFIG', homepageController]);
+    angular.module('content-homepage').controller('homepageCtrl', ['accountService', 'apiFactory', '$timeout', '$controller', '$scope', 'CONFIG', '$cordovaToast', homepageController]);
 })();
 
 
 
-(function () {
-    'use strict';
-
-    function layoutController($ionicSideMenuDelegate, accountService, $state, $controller, $scope) {
-        angular.extend(this, $controller('baseCtrl', { $scope: $scope }));
-        var self = this;
-
-        self.getUserContext = function() {
-            return accountService.initUserContext();
-        }
-
-        self.toggleLeft = function () {
-            $ionicSideMenuDelegate.toggleLeft();
-        };
-
-        self.logout = function () {
-            $ionicSideMenuDelegate.toggleLeft();
-            accountService.logout();
-            accountService.initUserContext();
-            $state.go('app.homepage');
-            console.log("loggedOut");
-        }
-
-        self.goTo = function (state) {
-            $state.go(state);
-            $ionicSideMenuDelegate.toggleLeft();
-        }
-    }
-
-    angular.module('content-layout').controller('layoutCtrl', ['$ionicSideMenuDelegate', 'accountService', '$state','$controller','$scope', layoutController]);
-})();
 (function () {
     'use strict';
 
